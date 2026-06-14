@@ -167,31 +167,22 @@ export default function CreateCampaign() {
             </label>
 <select
   value={category}
-  onChange={(e) =>
-    setCategory(e.target.value)
-  }
+  onChange={(e) => setCategory(e.target.value)}
   className="w-full border border-gray-300 rounded-2xl px-5 py-4 outline-none focus:border-black"
 >
+  <option value="">Select Category</option>
 
-
-<option value="">
-  Select Category
-</option>
-
-
-{categories.map((cat)=>(
-
-<option
-  key={cat.id}
-  value={cat.name}
->
-  {cat.name}
-</option>
-
-))}
-
-
+  {categories?.length > 0 &&
+    categories.map((cat, index) => (
+      <option
+        key={cat.id || index}
+        value={cat.name || cat}
+      >
+        {cat.name || cat}
+      </option>
+    ))}
 </select>
+
 
           </div>
 

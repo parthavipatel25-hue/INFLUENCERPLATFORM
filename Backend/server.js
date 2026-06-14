@@ -512,46 +512,57 @@ app.get(
 
   }
 );
-app.get(
-  "/api/seo/influencer/:id",
-  async (req, res) => {
 
-    try {
+app.get("/api/seo/influencer/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
-      const { id } = req.params;
+    console.log("🔥 SEO Influencer fetch by user id:", id);
 
-      const result = await pool.query(
-        `
-        SELECT *
-        FROM influencer_profiles
-        WHERE id = $1
-        `,
-        [id]
-      );
+    const result = await pool.query(
+      `
+      SELECT 
+        u.id,
+        u.name,
+        u.email,
 
-      if (result.rows.length === 0) {
-        return res.status(404).json({
-          success: false
-        });
-      }
+        i.id AS profile_id,
+        i.category,
+        i.city,
+        i.bio,
+        i.instagram,
+        i.image,
+        i.followers_count
 
-      res.json({
-        success: true,
-        influencer: result.rows[0]
+      FROM users u
+      LEFT JOIN influencer_profiles i
+        ON i.user_id = u.id
+      WHERE u.id = $1 AND u.role = 'influencer'
+      `,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Influencer not found",
       });
-
-    } catch (error) {
-
-      console.log(error);
-
-      res.status(500).json({
-        success: false
-      });
-
     }
 
+    return res.json({
+      success: true,
+      influencer: result.rows[0],
+    });
+
+  } catch (error) {
+    console.log("❌ SEO API error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
-);
+});
 /* =========================
    INFLUENCERS BY CITY + CATEGORY
 ========================= */
