@@ -512,7 +512,28 @@ app.get(
 
   }
 );
+app.get("/api/influencers", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT *
+      FROM influencer_profiles
+      ORDER BY created_at DESC
+    `);
 
+    return res.json({
+      success: true,
+      influencers: result.rows,
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      success: false,
+      influencers: [],
+    });
+  }
+});
 app.get("/api/seo/influencer/:id", async (req, res) => {
   try {
     const { id } = req.params;

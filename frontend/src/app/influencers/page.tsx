@@ -17,14 +17,14 @@ export default function InfluencersPage() {
       `${process.env.NEXT_PUBLIC_API_URL}/api/influencers`
     )
       .then((res) => res.json())
-      .then((data) => {
+    .then((data) => {
+  if (!data.success) {
+    setInfluencers([]);
+    return;
+  }
 
-        const list =
-          data.influencers || [];
-
-        setInfluencers(list);
-
-      })
+  setInfluencers(data.influencers || []);
+})
       .catch((error) => {
 
         console.log(error);
